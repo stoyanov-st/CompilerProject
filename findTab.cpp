@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <iostream.h>
 
 Pointer findTab(Pointer p, string sym, Attribute attr)
 {
