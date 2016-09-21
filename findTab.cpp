@@ -1,18 +1,16 @@
-#include <iostream.h>
+#include <iostream>
+#include <string>
+#include <map>
 
-Pointer findTab(Pointer p, string sym, Attribute attr)
+using namespace std;
+
+map<string, Attribute> symbolTable;
+
+int findTab(string sym, Attribute attr)
 {
-	if(!p)
+	if(!symbolTable.count(sym))
 	{
-		this->makeItem(p, sym, attr);
+		symbolTable.insert(sym, attr);
 	}
-	else if(sym == this->sym)
-	{
-		return p;
-	}
-	else if(sym < this->sym)
-	{
-		return findTab(p->left, sym, attr);
-	}
-	else return findTab(p->right, sym, attr);
+	else return symbolTable.count(sym);
 }
