@@ -1,6 +1,6 @@
 #include <iostream>
 #include <map>
-#include <list>
+#include <deque>
 #include <string>
 #include <regex>
 
@@ -15,18 +15,18 @@ using namespace std;
 */
 
 map<string, int> symbolTable;
-list<int> positionList;
+deque<int> positionList;
 
-regex letterRegex("[^A-Za-z\\w]");
-regex whitespaceOrEOLRegex("[[;]?\\s]"); // lacks special chars
-regex numberRegex("[0-9]\\d");
-regex operatorRegex("[\+\-\*\/\<\>\=\!\?\]");
+regex letterRegex("[A-Za-z]");
+regex _EOLRegex("[;]"); // lacks special chars
+regex numberRegex("[[:digit:]]");
+regex operatorRegex("[\\+|-|*|<|>|=|!|\\?]");
 
 int findTab(string sym, int attr){
 	
 	if(symbolTable.count(sym) == 0)
 	{
-		symbolTable[sym] =  attr;
+		symbolTable.emplace(sym, attr);
 		map<string, int>::iterator it = symbolTable.find(sym);
 
 		return distance(symbolTable.begin(), it);
@@ -43,75 +43,72 @@ int findTab(string sym, int attr){
 
 void lexicalAnalyze(string inputString)
 {
-	char* wordArray = new char[];
+	string wordArray, currentChar;
+	char nextChar;
 
-	for (int i = 0; i < inputString.size; i++)
+	for (unsigned int i = 0, length = inputString.length() ; i+1 <= length; i++)
 	{
+	
+		currentChar.push_back(inputString.at(i));
+		((i + 1) < length) ? nextChar = inputString.at(i + 1) : nextChar = ' ';
 
 		//Check if it is a letter
-		if (regex_match(to_string(inputString.at(i)), letterRegex))
+		if (regex_match(currentChar, letterRegex))
 		{
-			wordArray += inputString.at(i);
-
-			if (regex_match(to_string(inputString.at(i + 1)), whitespaceOrEOLRegex) || regex_match(to_string(inputString.at(i+1)), operatorRegex))
+			wordArray.append(currentChar);
+			
+			if (isspace(nextChar) || regex_match(to_string(nextChar),_EOLRegex) || regex_match(to_string(nextChar), operatorRegex))
 			{
-				positionList.insert(positionList.end, findTab(wordArray, 1));
-				wordArray = new char[];
+				positionList.push_back(findTab(wordArray, 1));
+				wordArray = "";
 			}
 		}
 
 		//Check if it is number
-		if (regex_match(to_string(inputString.at(i)), numberRegex))
+		else if (regex_match(currentChar, numberRegex))
 		{
-			wordArray += inputString.at(i);
+			wordArray.append(currentChar);
 
 			//Check for floating point
-			if (inputString.at(i) ==  '.')
+			if (currentChar.find('.'))
 			{
-				wordArray += inputString.at(i);
+				wordArray.append(currentChar);
 			}
 
-			if (regex_match(to_string(inputString.at(i + 1)), whitespaceOrEOLRegex) || regex_match(to_string(inputString.at(i+1)), operatorRegex))
+			if (isspace(nextChar) || regex_match(to_string(nextChar), _EOLRegex) || regex_match(to_string(nextChar), operatorRegex))
 			{
-				positionList.insert(positionList.end, findTab(wordArray, 2));
-				wordArray = new char[];
+				positionList.push_back(findTab(wordArray, 2));
+				wordArray = "";
 			}
 		}
 
 		//Check for operator
-		if (regex_match(to_string(inputString.at(i)), operatorRegex))
+		else if (regex_match(currentChar, operatorRegex))
 		{
-			wordArray += inputString.at(i);
+			wordArray += currentChar;
 
-			if (regex_match(to_string(inputString.at(i + 1)), whitespaceOrEOLRegex))
+			if (isspace(nextChar) || regex_match(to_string(nextChar), _EOLRegex))
 			{
-				positionList.insert(positionList.end, findTab(wordArray, 3));
-				wordArray = new char[];
+				positionList.push_back(findTab(wordArray, 3));
+				wordArray = wordArray = "";;
 			}
 		}
+
+		currentChar = "";
 	}
-
-	/*for each (char lex in inputString)
-	{
-		if (regex_match(to_string(lex), letterRegex) ) 
-		{
-
-		}
-		else
-		{
-			cout << regex_match(to_string(lex), letterRegex);
-		}
-	}*/
 }
 
 int main(void){
 	
-	char* inputCodeSnippet = new char[50];
+	string inputCodeSnippet;
 
 		cout << "Enter input snippet of code to be compiled, please: " << endl;
-		cin >> inputCodeSnippet;
+		getline(cin, inputCodeSnippet);
 		lexicalAnalyze(inputCodeSnippet);
-		//cout << "Sym, attr pair: " << findTab(inputCodeSnippet);
+		for (auto i = positionList.begin(); i != positionList.end(); i++)
+		{
+			cout << *i << endl;
+		}
 		cout << endl;
 	
 	system("pause");
