@@ -8,7 +8,7 @@ void printQueue(queue<T> queueToBePrinted)
 {
     while(!queueToBePrinted.empty())
     {
-       cout << queueToBePrinted.top();
+       cout << queueToBePrinted.top() << endl;
        queueToBePrinted.pop();
     }
-}
+ 
