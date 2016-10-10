@@ -1,6 +1,6 @@
 #include <iostream>
 #include <map>
-#include <deque>
+#include <queue>
 #include <string>
 #include <regex>
 
@@ -15,7 +15,7 @@ using namespace std;
 */
 
 map<string, int> symbolTable;
-deque<int> positionList;
+queue<int> positionList;
 
 regex letterRegex("[A-Za-z]");
 regex _EOLRegex("[;]"); // lacks special chars
@@ -105,10 +105,7 @@ int main(void){
 		cout << "Enter input snippet of code to be compiled, please: " << endl;
 		getline(cin, inputCodeSnippet);
 		lexicalAnalyze(inputCodeSnippet);
-		for (auto i = positionList.begin(); i != positionList.end(); i++)
-		{
-			cout << *i << endl;
-		}
+		printQueue(positionList);
 		cout << endl;
 	
 	system("pause");
