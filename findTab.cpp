@@ -1,11 +1,12 @@
 #include <iostream>
 #include <map>
-#include <queue>
 #include <string>
 #include <regex>
+#include <queue>
 
 using namespace std;
 
+#include "../ep/EP-2/EP-2/printQueue.h"
 /*SymbolTable Attributes
 	*********************
 		* 1 - Letter
@@ -23,22 +24,9 @@ regex numberRegex("[[:digit:]]");
 regex operatorRegex("[\\+|-|*|<|>|=|!|\\?]");
 
 int findTab(string sym, int attr){
+
+	return symbolTable[sym] = attr;
 	
-	if(symbolTable.count(sym) == 0)
-	{
-		symbolTable.emplace(sym, attr);
-		map<string, int>::iterator it = symbolTable.find(sym);
-
-		return distance(symbolTable.begin(), it);
-	}
-
-	else
-	{
-		map<string, int>::iterator it = symbolTable.find(sym);
-
-		return distance(symbolTable.begin(), it);
-	}
-		
 }
 
 void lexicalAnalyze(string inputString)
@@ -59,7 +47,7 @@ void lexicalAnalyze(string inputString)
 			
 			if (isspace(nextChar) || regex_match(to_string(nextChar),_EOLRegex) || regex_match(to_string(nextChar), operatorRegex))
 			{
-				positionList.push_back(findTab(wordArray, 1));
+				positionList.push(findTab(wordArray, 1));
 				wordArray = "";
 			}
 		}
@@ -70,14 +58,14 @@ void lexicalAnalyze(string inputString)
 			wordArray.append(currentChar);
 
 			//Check for floating point
-			if (currentChar.find('.'))
+			if (currentChar.find('.') && regex_match(to_string(nextChar), numberRegex))
 			{
 				wordArray.append(currentChar);
 			}
 
 			if (isspace(nextChar) || regex_match(to_string(nextChar), _EOLRegex) || regex_match(to_string(nextChar), operatorRegex))
 			{
-				positionList.push_back(findTab(wordArray, 2));
+				positionList.push(findTab(wordArray, 2));
 				wordArray = "";
 			}
 		}
@@ -89,7 +77,7 @@ void lexicalAnalyze(string inputString)
 
 			if (isspace(nextChar) || regex_match(to_string(nextChar), _EOLRegex))
 			{
-				positionList.push_back(findTab(wordArray, 3));
+				positionList.push(findTab(wordArray, 3));
 				wordArray = wordArray = "";;
 			}
 		}
