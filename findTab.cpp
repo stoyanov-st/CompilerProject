@@ -1,32 +1,44 @@
-#include <iostream>
-#include <map>
-#include <string>
-#include <regex>
-#include <queue>
-
 using namespace std;
 
-#include "../ep/EP-2/EP-2/printQueue.h"
+#include "findTab.h"
+
 /*SymbolTable Attributes
 	*********************
-		* 1 - Letter
-		* 2 - Number
-		* 3 - Operator
+		 1 - Letter
+		 2 - Number
+		 3 - Operator
 	*********************
 */
-
-map<string, int> symbolTable;
+vector<pair<string, int>> symbolTable;
 queue<int> positionList;
 
 regex letterRegex("[A-Za-z]");
-regex _EOLRegex("[;]"); // lacks special chars
+//regex _EOLRegex("[;]"); not working // lacks special chars
 regex numberRegex("[[:digit:]]");
 regex operatorRegex("[\\+|-|*|<|>|=|!|\\?]");
 
-int findTab(string sym, int attr){
+int findTab(string sym, int attr) {
 
-	return symbolTable[sym] = attr;
-	
+	if (find(symbolTable.begin(), symbolTable.end(), make_pair(sym, attr)) != symbolTable.end())
+	{
+		return distance(symbolTable.begin(), find(symbolTable.begin(), symbolTable.end(), make_pair(sym, attr)));
+	}
+	else
+	{
+		symbolTable.push_back(make_pair(sym, attr));
+		return distance(symbolTable.begin(), find(symbolTable.begin(), symbolTable.end(), make_pair(sym, attr)));
+	}	
+}
+
+void fillTable()
+{
+	symbolTable.push_back(make_pair("tremor", 1));
+	symbolTable.push_back(make_pair("tardo", 1));
+	symbolTable.push_back(make_pair("var", 1));
+	symbolTable.push_back(make_pair("tobe", 1));
+	symbolTable.push_back(make_pair("et", 1));
+	symbolTable.push_back(make_pair("ornottobe", 1));
+	symbolTable.push_back(make_pair("locus", 1));
 }
 
 void lexicalAnalyze(string inputString)
@@ -34,9 +46,9 @@ void lexicalAnalyze(string inputString)
 	string wordArray, currentChar;
 	char nextChar;
 
-	for (unsigned int i = 0, length = inputString.length() ; i+1 <= length; i++)
+	for (unsigned int i = 0, length = inputString.length(); i + 1 <= length; i++)
 	{
-	
+
 		currentChar.push_back(inputString.at(i));
 		((i + 1) < length) ? nextChar = inputString.at(i + 1) : nextChar = ' ';
 
@@ -44,8 +56,8 @@ void lexicalAnalyze(string inputString)
 		if (regex_match(currentChar, letterRegex))
 		{
 			wordArray.append(currentChar);
-			
-			if (isspace(nextChar) || regex_match(to_string(nextChar),_EOLRegex) || regex_match(to_string(nextChar), operatorRegex))
+
+			if (isspace(nextChar) || nextChar == ';' || regex_match(to_string(nextChar), operatorRegex))
 			{
 				positionList.push(findTab(wordArray, 1));
 				wordArray = "";
@@ -58,12 +70,17 @@ void lexicalAnalyze(string inputString)
 			wordArray.append(currentChar);
 
 			//Check for floating point
-			if (currentChar.find('.') && regex_match(to_string(nextChar), numberRegex))
+			if (nextChar == '.' && count(wordArray.begin(), wordArray.end(), '.') == 0)
 			{
-				wordArray.append(currentChar);
+				wordArray += nextChar;
+			}
+			else if (nextChar == '.' && count(wordArray.begin(), wordArray.end(), '.') > 0)
+			{
+				System::Windows::Forms::MessageBox::Show("Error! Not Allowed Multiple Floating Point Use!");
+				break;
 			}
 
-			if (isspace(nextChar) || regex_match(to_string(nextChar), _EOLRegex) || regex_match(to_string(nextChar), operatorRegex))
+			if (isspace(nextChar) || nextChar == ';' || regex_match(to_string(nextChar), operatorRegex))
 			{
 				positionList.push(findTab(wordArray, 2));
 				wordArray = "";
@@ -75,7 +92,7 @@ void lexicalAnalyze(string inputString)
 		{
 			wordArray += currentChar;
 
-			if (isspace(nextChar) || regex_match(to_string(nextChar), _EOLRegex))
+			if (isspace(nextChar) || nextChar == ';')
 			{
 				positionList.push(findTab(wordArray, 3));
 				wordArray = wordArray = "";;
@@ -86,16 +103,20 @@ void lexicalAnalyze(string inputString)
 	}
 }
 
+
+/*
 int main(void){
-	
+
 	string inputCodeSnippet;
 
-		cout << "Enter input snippet of code to be compiled, please: " << endl;
-		getline(cin, inputCodeSnippet);
+		//cout << "Enter input snippet of code to be compiled, please: " << endl;
+		//getline(cin, inputCodeSnippet);
 		lexicalAnalyze(inputCodeSnippet);
 		printQueue(positionList);
 		cout << endl;
-	
+
 	system("pause");
 	return 0;
 }
+
+*/

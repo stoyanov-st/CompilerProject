@@ -1,6 +1,9 @@
-#ifndef print_queue_h
-#define print_queue_h
+#pragma once
 
-void printQueue(queue<int> queueToBePrinted);
-	
-#endif // !1
+#include <iostream>
+#include <queue>
+#include <string>
+#include <map>
+
+System::String^ printQueue(std::queue<int>);
+System::String^ printMap(std::vector<std::pair<std::string, int>>);
