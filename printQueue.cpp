@@ -21,6 +21,8 @@ String^ printMap(vector<pair<string, int>> mapToBePrinted)
 
 	for (vector<pair<string, int>>::iterator i = mapToBePrinted.begin(); i != mapToBePrinted.end(); i++)
 	{
+		bufferStringArray += distance(mapToBePrinted.begin(), i);
+		bufferStringArray += "  ";
 		bufferStringArray += gcnew String(i->first.c_str());
 		bufferStringArray += "    ";
 		bufferStringArray += i->second;

@@ -3,8 +3,7 @@
 #include <iostream>
 #include "findTab.h"
 
-void zBlock(std::string nextSymbol);
-void errorBlock();
+void errorBlock(std::string errorMessage);
 void headBlock(std::string nextSymbol);
 void logicBlock(std::string nextSymbol);
 void statementBlock(std::string nextSymbol);

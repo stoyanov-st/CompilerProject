@@ -15,8 +15,8 @@ queue<int> positionList;
 regex letterRegex("[A-Za-z]");
 //regex _EOLRegex("[;]"); not working // lacks special chars
 regex numberRegex("[[:digit:]]");
-regex operatorRegex("[\\+|-|*|<|>|=|!|\\?]");
-
+char operators[] { '+', '-', '.', '!', '*', '/', '(', ')'};
+string operatorString[]{ "+", "-", ".", "!", "*", "/", "(", ")", "=" };
 int findTab(string sym, int attr) {
 
 	if (find(symbolTable.begin(), symbolTable.end(), make_pair(sym, attr)) != symbolTable.end())
@@ -57,7 +57,7 @@ void lexicalAnalyze(string inputString)
 		{
 			wordArray.append(currentChar);
 
-			if (isspace(nextChar) || nextChar == ';' || regex_match(to_string(nextChar), operatorRegex))
+			if (isspace(nextChar) || find(begin(operators), end(operators), nextChar) != end(operators))
 			{
 				positionList.push(findTab(wordArray, 1));
 				wordArray = "";
@@ -80,7 +80,7 @@ void lexicalAnalyze(string inputString)
 				break;
 			}
 
-			if (isspace(nextChar) || nextChar == ';' || regex_match(to_string(nextChar), operatorRegex))
+			if (isspace(nextChar) || find(begin(operators), end(operators), nextChar) != end(operators))
 			{
 				positionList.push(findTab(wordArray, 2));
 				wordArray = "";
@@ -88,15 +88,13 @@ void lexicalAnalyze(string inputString)
 		}
 
 		//Check for operator
-		else if (regex_match(currentChar, operatorRegex))
+		else if (find(begin(operatorString), end(operatorString), currentChar) != end(operatorString))
 		{
 			wordArray += currentChar;
 
-			if (isspace(nextChar) || nextChar == ';')
-			{
-				positionList.push(findTab(wordArray, 3));
-				wordArray = wordArray = "";;
-			}
+			positionList.push(findTab(wordArray, 3));
+			wordArray = wordArray = "";;
+
 		}
 
 		currentChar = "";
